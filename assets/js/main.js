@@ -55,21 +55,38 @@ window.addEventListener('scroll', scrollUp)
 
 /*=============== SCROLL SECTIONS ACTIVE LINK ===============*/
 const sections = document.querySelectorAll('section[id]')
+
 const scrollActive = () => {
     const scrollY = window.scrollY
+    let currentSectionId = ''
 
     sections.forEach(section => {
-        const id = section.id,
-            top = section.offsetTop - 50,
-            height = section.offsetHeight,
-            link = document.querySelector('.nav__menu a[href*=' + id + ']')
+        const sectionTop =
+            section.getBoundingClientRect().top + window.scrollY - 50
+        const sectionBottom = sectionTop + section.offsetHeight
 
-        if (!link) return
+        if (scrollY >= sectionTop && scrollY < sectionBottom) {
+            currentSectionId = section.id
+        }
+    })
 
-        link.classList.toggle('active-link', scrollY > top && scrollY <= top + height)
+    navLink.forEach(link => {
+        const href = link.getAttribute('href')
+        const targetId = href && href.startsWith('#')
+            ? href.slice(1)
+            : ''
+
+        link.classList.toggle(
+            'active-link',
+            targetId === currentSectionId
+        )
     })
 }
+
 window.addEventListener('scroll', scrollActive)
+window.addEventListener('load', scrollActive)
+
+scrollActive()
 
 /*=============== SCROLL REVEAL ANIMATION ===============*/
 const sr = ScrollReveal({
